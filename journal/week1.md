@@ -40,7 +40,8 @@ docker run --rm -p 4567:4567 -e BACKEND_URL='*' -e FRONTEND_URL='*' -it backend-
 ### Run Docker Compose (Multiple Containers & Interconnectivity)
 ```bash
 docker compose -f "docker-compose.yaml" up -d --build
-
+```
 ```bash
 docker ps
 ```
+
