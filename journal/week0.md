@@ -1,7 +1,7 @@
 # Week 0 — Billing and Architecture
 
 ## Architecture
-![Architecture Diagram]([https://lucid.app/lucidchart/b84c00f9-ac2b-4977-8a4a-3b986635f02b/edit?invitationId=inv_000645f4-8ee9-4f69-a47c-e23cef7a8867&page=0_0#](https://lucid.app/lucidchart/b84c00f9-ac2b-4977-8a4a-3b986635f02b/edit?viewport_loc=-374%2C-451%2C3333%2C1452%2C0_0&invitationId=inv_000645f4-8ee9-4f69-a47c-e23cef7a8867))
+![Architecture Diagram](https://lucid.app/lucidchart/b84c00f9-ac2b-4977-8a4a-3b986635f02b/edit?viewport_loc=-374%2C-451%2C3333%2C1452%2C0_0&invitationId=inv_000645f4-8ee9-4f69-a47c-e23cef7a8867)
 
 ## Created AWS Budget
 ```bash
@@ -15,7 +15,7 @@ aws budgets create-budget \
 ```json
 {
     "BudgetLimit": {
-        "Amount": "1",
+        "Amount": "10",
         "Unit": "USD"
     },
     "BudgetName": "Example Tag Budget",
@@ -113,3 +113,4 @@ aws cloudwatch put-metric-alarm --cli-input-json file://aws/json/alarm_config.js
         "ReturnData": true
     }]
 }
+```
