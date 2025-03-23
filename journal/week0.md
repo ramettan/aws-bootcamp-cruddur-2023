@@ -3,6 +3,9 @@
 ## Architecture
 ![Architecture Diagram](https://lucid.app/lucidchart/b84c00f9-ac2b-4977-8a4a-3b986635f02b/edit?viewport_loc=-374%2C-451%2C3333%2C1452%2C0_0&invitationId=inv_000645f4-8ee9-4f69-a47c-e23cef7a8867)
 
+![image](https://github.com/user-attachments/assets/ec22c643-8d42-4336-85f8-d930ed417da9)
+
+
 ## Created AWS Budget
 ```bash
 aws budgets create-budget \
