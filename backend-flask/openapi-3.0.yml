@@ -42,6 +42,21 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Activity'
+  /api/activities/notifications:
+    get:
+      description: 'Return a feed of my activities to all I follow'
+      tags:
+       - activities
+      parameters: []
+      responses:
+        '200':
+          description: Return an array of activities
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
   /api/activities:
     post:
       description: Create a new activitiy eg. Creating a Crud
