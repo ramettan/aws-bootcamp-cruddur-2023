@@ -21,11 +21,37 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter,SimpleSpanProcessor
 
+from dotenv import load_dotenv
+
+#Load all environment variables from root path
+load_dotenv(dotenv_path="../.env")
+
+#HoneyComb
 # Initialize tracing and an exporter that can send data to Honeycomb
 provider = TracerProvider()
-processor = BatchSpanProcessor(OTLPSpanExporter())
+# Use HTTPS and set API key in headers
+print("HONEYCOMB_API_KEY from env:", os.getenv("HONEYCOMB_API_KEY"))
+
+
+#explicit addotion of api key
+otlp_exporter = OTLPSpanExporter(
+    endpoint="https://api.honeycomb.io/v1/traces",
+    headers={
+        "x-honeycomb-team": os.getenv("HONEYCOMB_API_KEY")  # Make sure this env var is set
+    }
+)
+
+processor = BatchSpanProcessor(otlp_exporter)
 provider.add_span_processor(processor)
+
+
+#show this in the logs of backend flask app STDOUT
+simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
+provider.add_span_processor(simple_processor)
+
+
 trace.set_tracer_provider(provider)
 tracer = trace.get_tracer(__name__)
 
@@ -35,7 +61,6 @@ app = Flask(__name__)
 #honeycomb-Initialize automatic instrumentation with Flask
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
-
 
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
