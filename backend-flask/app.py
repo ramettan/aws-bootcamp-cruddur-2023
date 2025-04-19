@@ -26,13 +26,11 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter,SimpleSpanProcess
 from dotenv import load_dotenv
 
 #Load all environment variables from root path
-load_dotenv(dotenv_path="../.env")
+#load_dotenv(dotenv_path="../.env")
 
 #HoneyComb
 # Initialize tracing and an exporter that can send data to Honeycomb
 provider = TracerProvider()
-# Use HTTPS and set API key in headers
-print("HONEYCOMB_API_KEY from env:", os.getenv("HONEYCOMB_API_KEY"))
 
 
 #explicit addotion of api key
