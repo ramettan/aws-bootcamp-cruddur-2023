@@ -49,7 +49,7 @@ provider.add_span_processor(processor)
 #Xray-----------------------------------------
 xray_url= os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
-XRayMiddleware(app, xray_recorder)
+
 
 
 
@@ -61,6 +61,10 @@ tracer = trace.get_tracer(__name__)
 
 
 app = Flask(__name__)
+
+
+#Xray-----------
+XRayMiddleware(app, xray_recorder)
 
 #honeycomb-Initialize automatic instrumentation with Flask
 FlaskInstrumentor().instrument_app(app)
