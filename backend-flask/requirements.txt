@@ -1,5 +1,6 @@
 flask
 flask-cors
+
 python-dotenv
 opentelemetry-instrumentation
 opentelemetry-distro 
@@ -8,6 +9,8 @@ opentelemetry-sdk
 opentelemetry-exporter-otlp-proto-http
 opentelemetry-instrumentation-flask
 opentelemetry-instrumentation-requests
+
+aws-xray-sdk
 
 
 
