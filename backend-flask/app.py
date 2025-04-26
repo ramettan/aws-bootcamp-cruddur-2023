@@ -25,7 +25,7 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter,SimpleSpanProcess
 
 
 #AWS Xray
-from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.core import xray_recorder, patch_all
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
 from dotenv import load_dotenv
@@ -122,8 +122,9 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-  data = HomeActivities.run()
-  return data, 200
+    with xray_recorder.in_subsegment('data_home_subsegment'):
+        data = HomeActivities.run()
+        return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
 def data_notifications():
