@@ -48,7 +48,11 @@ provider.add_span_processor(processor)
 
 #Xray-----------------------------------------
 xray_url= os.getenv("AWS_XRAY_URL")
-xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+xray_recorder.configure(
+    service='backend-flask',
+    daemon_address=os.getenv("AWS_XRAY_DAEMON_ADDRESS"),
+    dynamic_naming=xray_url
+)
 
 
 
