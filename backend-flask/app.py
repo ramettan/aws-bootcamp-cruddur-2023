@@ -57,7 +57,7 @@ xray_recorder.configure(
 
 
 
-#show this in the logs of backend flask app STDOUT
+#show this in the logs of backend flask app STDOUT (HONEYCOMB)
 simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
 provider.add_span_processor(simple_processor)
 trace.set_tracer_provider(provider)
@@ -122,7 +122,7 @@ def data_create_message():
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-    with xray_recorder.in_subsegment('data_home_subsegment'):
+
         data = HomeActivities.run()
         return data, 200
 
