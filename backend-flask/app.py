@@ -103,7 +103,7 @@ cors = CORS(
 @app.after_request
 def after_request(response):
     timestamp = datetime.now().strftime('[%Y-%b-%d %H:%M]')
-    LOGGER.error(
+    logger.error(
         '%s %s %s %s %s %s',
         timestamp,
         request.remote_addr,
@@ -152,7 +152,7 @@ def data_create_message():
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
 
-        data = HomeActivities.run(logger=logger)
+        data = HomeActivities.run()
         return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
