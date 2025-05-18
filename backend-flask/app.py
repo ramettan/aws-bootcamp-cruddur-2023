@@ -28,6 +28,11 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter,SimpleSpanProcess
 from aws_xray_sdk.core import xray_recorder, patch_all
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
+
+#cloudwatch logging
+import watchtower, logging
+from time import strftime
+
 from dotenv import load_dotenv
 
 #Load all environment variables from root path
@@ -53,6 +58,16 @@ xray_recorder.configure(
     daemon_address=os.getenv("AWS_XRAY_DAEMON_ADDRESS"),
     dynamic_naming=xray_url
 )
+
+#Cloudeatch logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+console_handler=logging.StreamHandler()
+cw_handler=watchtower.CloudWatchLogHandler(log_group='cruddr')
+logger.addHandler(console_handler)
+logger.addHandler(cw_handler)
+
 
 
 
@@ -84,6 +99,20 @@ cors = CORS(
   allow_headers="content-type,if-modified-since",
   methods="OPTIONS,GET,HEAD,POST"
 )
+
+@app.after_request
+def after_request(response):
+    timestamp = datetime.now().strftime('[%Y-%b-%d %H:%M]')
+    LOGGER.error(
+        '%s %s %s %s %s %s',
+        timestamp,
+        request.remote_addr,
+        request.method,
+        request.scheme,
+        request.full_path,
+        response.status
+    )
+    return response
 
 @app.route("/api/message_groups", methods=['GET'])
 def data_message_groups():
@@ -123,7 +152,7 @@ def data_create_message():
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
 
-        data = HomeActivities.run()
+        data = HomeActivities.run(logger=logger)
         return data, 200
 
 @app.route("/api/activities/notifications", methods=['GET'])
