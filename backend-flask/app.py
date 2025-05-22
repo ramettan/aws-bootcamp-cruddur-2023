@@ -33,6 +33,11 @@ from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 import watchtower, logging
 from time import strftime
 
+#rollbar
+import rollbar
+import rollbar.contrib.flask
+from flask import got_request_exception
+
 from dotenv import load_dotenv
 
 #Load all environment variables from root path
@@ -85,6 +90,28 @@ app = Flask(__name__)
 #Xray-----------
 XRayMiddleware(app, xray_recorder)
 
+#rollbar
+rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+
+# Initialize Rollbar
+def init_rollbar():
+    """init rollbar module"""
+    rollbar.init(
+        # access token
+        rollbar_access_token,
+        # environment name
+        'production',
+        # server root directory, makes tracebacks prettier
+        root=os.path.dirname(os.path.realpath(__file__)),
+        # flask already sets up logging
+        allow_logging_basic_config=False
+    )
+    # send exceptions from 'app' to rollbar, using flask's signal system.
+    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+
+# Call init_rollbar at the start of the application
+init_rollbar()
+
 #honeycomb-Initialize automatic instrumentation with Flask
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
@@ -99,6 +126,11 @@ cors = CORS(
   allow_headers="content-type,if-modified-since",
   methods="OPTIONS,GET,HEAD,POST"
 )
+
+@app.route('/rollbar/test')
+def rollbar_test():
+    rollbar.report_message('Hello World!', 'warning')
+    return "Hello World!"
 
 @app.after_request
 def after_request(response):
