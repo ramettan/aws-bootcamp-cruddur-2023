@@ -1,41 +1,39 @@
 import './SigninPage.css';
 import React from "react";
-import {ReactComponent as Logo} from '../components/svg/logo.svg';
+import { ReactComponent as Logo } from '../components/svg/logo.svg';
 import { Link } from "react-router-dom";
-
-// [TODO] Authenication
-import Cookies from 'js-cookie'
+import { signIn } from 'aws-amplify/auth';
 
 export default function SigninPage() {
-
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [errors, setErrors] = React.useState('');
 
   const onsubmit = async (event) => {
     event.preventDefault();
-    setErrors('')
-    console.log('onsubmit')
-    if (Cookies.get('user.email') === email && Cookies.get('user.password') === password){
-      Cookies.set('user.logged_in', true)
-      window.location.href = "/"
-    } else {
-      setErrors("Email and password is incorrect or account doesn't exist")
+    setErrors('');
+    console.log('Signing in with Amplify...');
+
+    try {
+      const { isSignedIn } = await signIn({
+        username: email,
+        password: password
+      });
+
+      if (isSignedIn) {
+        // Store token if needed (placeholder here)
+        localStorage.setItem("access_token", "some_token_value");
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error('Sign-in error:', error);
+      if (error.name === 'UserNotConfirmedException') {
+        window.location.href = '/confirm';
+      } else {
+        setErrors(error.message || 'An error occurred during sign-in');
+      }
     }
-    return false
-  }
-
-  const email_onchange = (event) => {
-    setEmail(event.target.value);
-  }
-  const password_onchange = (event) => {
-    setPassword(event.target.value);
-  }
-
-  let el_errors;
-  if (errors){
-    el_errors = <div className='errors'>{errors}</div>;
-  }
+  };
 
   return (
     <article className="signin-article">
@@ -54,7 +52,7 @@ export default function SigninPage() {
               <input
                 type="text"
                 value={email}
-                onChange={email_onchange} 
+                onChange={(e) => setEmail(e.target.value)} 
               />
             </div>
             <div className='field text_field password'>
@@ -62,25 +60,21 @@ export default function SigninPage() {
               <input
                 type="password"
                 value={password}
-                onChange={password_onchange} 
+                onChange={(e) => setPassword(e.target.value)} 
               />
             </div>
           </div>
-          {el_errors}
+          {errors && <div className='errors'>{errors}</div>}
           <div className='submit'>
             <Link to="/forgot" className="forgot-link">Forgot Password?</Link>
             <button type='submit'>Sign In</button>
           </div>
-
         </form>
         <div className="dont-have-an-account">
-          <span>
-            Don't have an account?
-          </span>
+          <span>Don't have an account?</span>
           <Link to="/signup">Sign up!</Link>
         </div>
       </div>
-
     </article>
   );
 }
