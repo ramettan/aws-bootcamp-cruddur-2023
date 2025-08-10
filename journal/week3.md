@@ -37,3 +37,12 @@ Update the environment variables,
 
 
 Conditionally show components based on logged in or logged out 
+
+
+
+
+#after making all the js changes:
+
+aws cognito-idp admin-set-user-password --username <> --password <>--user-pool-id us-east-1_0eypH1BzF --permanent
+
+This has to be ran inorder to make the user confirmed

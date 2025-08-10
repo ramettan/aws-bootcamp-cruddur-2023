@@ -2,7 +2,7 @@ import './SigninPage.css';
 import React from "react";
 import { ReactComponent as Logo } from '../components/svg/logo.svg';
 import { Link } from "react-router-dom";
-import { signIn } from 'aws-amplify/auth';
+import { signIn, fetchAuthSession } from 'aws-amplify/auth';
 
 export default function SigninPage() {
   const [email, setEmail] = React.useState('');
@@ -15,15 +15,25 @@ export default function SigninPage() {
     console.log('Signing in with Amplify...');
 
     try {
-      const { isSignedIn } = await signIn({
+      // Sign in with email (Cognito configured for email sign-in)
+      const { isSignedIn, nextStep } = await signIn({
         username: email,
-        password: password
+        password
       });
 
       if (isSignedIn) {
-        // Store token if needed (placeholder here)
-        localStorage.setItem("access_token", "some_token_value");
+        // Get Cognito tokens after sign-in
+        const session = await fetchAuthSession();
+        const accessToken = session.tokens?.accessToken?.toString();
+
+        if (accessToken) {
+          localStorage.setItem("access_token", accessToken);
+        }
+
         window.location.href = "/";
+      } else if (nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
+        // Redirect if sign-up not confirmed
+        window.location.href = '/confirm';
       }
     } catch (error) {
       console.error('Sign-in error:', error);
@@ -50,9 +60,10 @@ export default function SigninPage() {
             <div className='field text_field username'>
               <label>Email</label>
               <input
-                type="text"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)} 
+                required
               />
             </div>
             <div className='field text_field password'>
@@ -61,6 +72,7 @@ export default function SigninPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)} 
+                required
               />
             </div>
           </div>
