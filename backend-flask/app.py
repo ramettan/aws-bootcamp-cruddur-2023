@@ -65,13 +65,13 @@ xray_recorder.configure(
 )
 
 #Cloudeatch logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-console_handler=logging.StreamHandler()
-cw_handler=watchtower.CloudWatchLogHandler(log_group='cruddr')
-logger.addHandler(console_handler)
-logger.addHandler(cw_handler)
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
+# console_handler=logging.StreamHandler()
+# cw_handler=watchtower.CloudWatchLogHandler(log_group='cruddr')
+# logger.addHandler(console_handler)
+# logger.addHandler(cw_handler)
 
 
 
